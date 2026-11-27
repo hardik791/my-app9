@@ -3,6 +3,7 @@ name: Upload images to S3
 on:
   push:
     branches: [main]
+  workflow_dispatch:
 
 permissions:
   id-token: write   # required for OIDC
@@ -14,11 +15,23 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Debug OIDC claims
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const t = await core.getIDToken('sts.amazonaws.com');
+            const p = JSON.parse(Buffer.from(t.split('.')[1], 'base64url').toString());
+            core.info(JSON.stringify({iss: p.iss, aud: p.aud, sub: p.sub}, null, 2));
+
       - name: Configure AWS credentials (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: arn:aws:iam::872927006383:role/RoleforGithub
+          role-session-name: github-actions-upload
           aws-region: ap-south-1
 
-      - name: Sync images to S3
-        run: aws s3 cp ./index.html s3://testbkts54-872927006383-ap-south-1-an/index.html
+      - name: Who am I (verify role)
+        run: aws sts get-caller-identity
+
+      - name: Upload index.html to S3
+        run: aws s3 cp ./index.html s3://testbkts54-872927006383
