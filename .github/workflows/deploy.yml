@@ -34,4 +34,4 @@ jobs:
         run: aws sts get-caller-identity
 
       - name: Upload index.html to S3
-        run: aws s3 cp ./index.html s3://testbkts54-872927006383
+        run: aws s3 cp ./index.html s3://testbkts54-872927006383-ap-south-1-an/index.html
