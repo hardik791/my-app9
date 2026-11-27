@@ -21,4 +21,4 @@ jobs:
           aws-region: ap-south-1
 
       - name: Sync images to S3
-        run: aws s3 sync ./images s3://testbkts54-872927006383-ap-south-1-an/images/
+        run: aws s3 cp ./index.html s3://testbkts54-872927006383-ap-south-1-an/index.html
